@@ -1,11 +1,40 @@
 {{ header }}
+<link href="catalog/view/theme/default/stylesheet/custom_page.css" rel="stylesheet" type="text/css">
 {{ column_left }}
 {{ column_right }}
 <div class="container">
 <div class="col-sm-12">
-my page
+<div id="productTable">Loading products...</div>
 </div>
 </div>
 {{ content_top}}
 {{ content_bottom }}
 {{ footer }} 
+
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: 'index.php?route=mycontroller/myhome/index',
+        type: 'get',
+        dataType: 'json',
+        success: function(data) {
+            var html = '<table><tr><th>Product ID</th><th>Name</th><th>Price</th><th>Rating</th><th>Image</th><th>Details</th></tr>';
+            $.each(data, function(index, item) {
+                html += '<tr>' +
+                    '<td>' + item.product_id + '</td>' +
+                    '<td>' + item.name + '</td>' +
+                    '<td>' + item.price + '</td>' +
+                    '<td>' + parseFloat(item.avg_rating).toFixed(2) + '</td>' +
+                    '<td><img src="' + item.image + '" alt="' + item.name + '"></td>' +
+                    '<td><a href="' + item.url + '">View Product</a></td>' +
+                '</tr>';
+            });
+            html += '</table>';
+            $('#productTable').html(html);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert('Error: ' + xhr.status + ' - ' + thrownError);
+        }
+    });
+});
+</script>

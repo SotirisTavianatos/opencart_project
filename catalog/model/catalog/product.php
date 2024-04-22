@@ -536,4 +536,27 @@ class ModelCatalogProduct extends Model {
 			return 0;
 		}
 	}
+	
+	
+	public function getProductsWithRatings() {
+		$sql = "SELECT 
+            p.product_id,
+            pd.name,
+            p.price,
+            p.image,
+            IFNULL(r.avg_rating, 0) as avg_rating
+        FROM 
+            " . DB_PREFIX . "product p
+        LEFT JOIN 
+            " . DB_PREFIX . "product_description pd ON p.product_id = pd.product_id
+        LEFT JOIN 
+            product_avg_rating r ON p.product_id = r.product_id
+        WHERE 
+            pd.language_id = '" . (int)$this->config->get('config_language_id') . "'
+        GROUP BY 
+            p.product_id";
+		$query = $this->db->query($sql);
+    return $query->rows;
+}
+
 }
