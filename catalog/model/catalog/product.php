@@ -538,24 +538,29 @@ class ModelCatalogProduct extends Model {
 	}
 	
 	
-	public function getProductsWithRatings() {
+	public function getProductsWithRatings($min_rating = 0) {
 		$sql = "SELECT 
-            p.product_id,
-            pd.name,
-            p.price,
-            p.image,
-            IFNULL(r.avg_rating, 0) as avg_rating
-        FROM 
-            " . DB_PREFIX . "product p
-        LEFT JOIN 
-            " . DB_PREFIX . "product_description pd ON p.product_id = pd.product_id
-        LEFT JOIN 
-            product_avg_rating r ON p.product_id = r.product_id
-        WHERE 
-            pd.language_id = '" . (int)$this->config->get('config_language_id') . "'
-        GROUP BY 
-            p.product_id";
-		$query = $this->db->query($sql);
+                p.product_id,
+                pd.name,
+                p.price,
+                p.image,
+                IFNULL(r.avg_rating, 0) as avg_rating
+            FROM 
+                oc_product p
+            LEFT JOIN 
+                oc_product_description pd ON p.product_id = pd.product_id
+            LEFT JOIN 
+                product_avg_rating r ON p.product_id = r.product_id
+            WHERE 
+                pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+    if ($min_rating > 0) {
+        $sql .= " AND IFNULL(r.avg_rating, 0) >= " . (int)$min_rating;
+    }
+
+    $sql .= " GROUP BY p.product_id";
+
+    $query = $this->db->query($sql); // Corrected this line
     return $query->rows;
 }
 

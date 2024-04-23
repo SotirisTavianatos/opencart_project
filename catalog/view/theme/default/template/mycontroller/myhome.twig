@@ -3,38 +3,63 @@
 {{ column_left }}
 {{ column_right }}
 <div class="container">
-<div class="col-sm-12">
-<div id="productTable">Loading products...</div>
+    <div class="select-container">
+        <select id="ratingFilter">
+            <option value="" disabled hidden selected>Minimum average rating:</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">Show all</option>
+        </select>
+    </div>
+    <div id="productTable">Loading products...</div>
 </div>
-</div>
+
 {{ content_top}}
 {{ content_bottom }}
 {{ footer }} 
 
 <script>
 $(document).ready(function() {
-    $.ajax({
-        url: 'index.php?route=mycontroller/myhome/index',
-        type: 'get',
-        dataType: 'json',
-        success: function(data) {
-            var html = '<table><tr><th>Product ID</th><th>Name</th><th>Price</th><th>Rating</th><th>Image</th><th>Details</th></tr>';
-            $.each(data, function(index, item) {
-                html += '<tr>' +
-                    '<td>' + item.product_id + '</td>' +
-                    '<td>' + item.name + '</td>' +
-                    '<td>' + item.price + '</td>' +
-                    '<td>' + parseFloat(item.avg_rating).toFixed(2) + '</td>' +
-                    '<td><img src="' + item.image + '" alt="' + item.name + '"></td>' +
-                    '<td><a href="' + item.url + '">View Product</a></td>' +
-                '</tr>';
-            });
-            html += '</table>';
-            $('#productTable').html(html);
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-            alert('Error: ' + xhr.status + ' - ' + thrownError);
-        }
+    // Initial AJAX call to load all products when the page is loaded
+    fetchProducts();
+
+    // Event listener for the select element
+    $('#ratingFilter').change(function() {
+        var selectedRating = $(this).val(); // Get the selected rating value
+        fetchProducts(selectedRating);       
     });
+
+    // Function to make AJAX call and update product table
+    function fetchProducts(rating = '') {
+        $.ajax({
+            url: 'index.php?route=mycontroller/myhome/index' + (rating ? '&rating=' + rating : ''),
+            type: 'get',
+            dataType: 'json',
+            success: function(data) {
+                updateProductTable(data); // Call function to update table with new data
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert('Error: ' + xhr.status + ' - ' + thrownError);
+            }
+        });
+    }
+	
+    function updateProductTable(data) {
+        var html = '<table><tr><th>Name</th><th>Price</th><th> Average Rating</th><th>Image</th><th>Details</th></tr>';
+        $.each(data, function(index, item) {
+            html += '<tr>' +
+                '<td>' + item.name + '</td>' +
+                '<td>' + item.price + '</td>' +
+                '<td>' + parseFloat(item.avg_rating).toFixed(2)+'/5' + '</td>' +
+                '<td><img src="' + item.image + '" alt="' + item.name + '"></td>' +
+                '<td><a href="' + item.url + '">View Product</a></td>' +
+            '</tr>';
+        });
+        html += '</table>';
+        $('#productTable').html(html);
+    }
 });
 </script>
+
