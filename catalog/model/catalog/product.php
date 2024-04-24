@@ -552,15 +552,16 @@ class ModelCatalogProduct extends Model {
             LEFT JOIN 
                 product_avg_rating r ON p.product_id = r.product_id
             WHERE 
-                pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+                pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";// Filter by the current language to fetch correct names
 
+	//If a minimum rating is specified filter products 
     if ($min_rating > 0) {
         $sql .= " AND IFNULL(r.avg_rating, 0) >= " . (int)$min_rating;
     }
 
     $sql .= " GROUP BY p.product_id";
 
-    $query = $this->db->query($sql); // Corrected this line
+    $query = $this->db->query($sql); 
     return $query->rows;
 }
 

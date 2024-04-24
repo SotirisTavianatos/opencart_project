@@ -27,7 +27,7 @@
 
 #ratingFilter {
     padding: 10px 20px; 
-    font-size: 12px; /* Increases the font size, affecting the overall size of the select */
+    font-size: 12px; 
     cursor: pointer;
-    width: 20%; /* Optional: Adjusts the width of the select button */
+    width: 20%; 
 }

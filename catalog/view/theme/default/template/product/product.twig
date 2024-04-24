@@ -552,18 +552,15 @@ $(document).ready(function() {
 });
 //--></script> 
 <script type="text/javascript">
-$('input[name="quantity"], select[name="recurring_id"]').on('input change', function() {
-    console.log("Change detected");
+$('input[name="quantity"]').on('input change', function() {
     var product_id = $('input[name="product_id"]').val();
-    var quantity = $('input[name="quantity"]').val();
-    var recurring_id = $('select[name="recurring_id"]').val();
+    var quantity = $(this).val(); // Get the quantity from the input field 
     $.ajax({
         url: 'index.php?route=product/product/checkProductStock',
         type: 'post',
-        data: {product_id: product_id, quantity: quantity, recurring_id: recurring_id},
+        data: {product_id: product_id, quantity: quantity},
         dataType: 'json',
         beforeSend: function() {
-            $('#recurring-description').html('');
             $('#button-cart').prop('disabled', true); // Disable button until the response
             $('#button-cart-wrapper').removeAttr('title'); // Remove tooltip
         },
@@ -571,12 +568,10 @@ $('input[name="quantity"], select[name="recurring_id"]').on('input change', func
             $('.alert-dismissible, .text-danger').remove();
             if (json.error) {
                 $('#button-cart').prop('disabled', true); // Disable the button if there is an error (like insufficient stock)
-                $('#button-cart-wrapper').attr('title', 'Out of stock'); // Add tooltip
-                console.log('Button disabled due to error:', json.error);
+                $('#button-cart-wrapper').attr('title', 'Out of stock'); // Add tooltip indicating out of stock
             } else {
-                $('#button-cart').prop('disabled', false); // Enable the button if no error
+                $('#button-cart').prop('disabled', false); // Enable the button if there is sufficient stock
                 $('#button-cart-wrapper').removeAttr('title'); // Remove tooltip
-                $('#recurring-description').html(json.success);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ heading_title }}</title>
+    <style>
+        .button {
+            padding: 8px 16px;
+            margin: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ heading_title }}</h1>
+        <div class="panel">
+            <h3>{{ text_edit }}</h3>
+            <p>{{ text_description }}</p>
+            <div>
+                <a href="{{ uninstall }}" class="button" style="background-color:#8B0000; color: white;">Uninstall</a>
+                <a href="{{ action }}" class="button" style="background-color: gray; color: white;">Install</a>
+                <a href="{{ back }}" class="button" style="background-color: gray; color: white;">Exit</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

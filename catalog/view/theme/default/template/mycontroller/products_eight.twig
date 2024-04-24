@@ -34,7 +34,7 @@ $(document).ready(function() {
     // Function to make AJAX call and update product table
     function fetchProducts(rating = '') {
         $.ajax({
-            url: 'index.php?route=mycontroller/myhome/index' + (rating ? '&rating=' + rating : ''),
+            url: 'index.php?route=mycontroller/products_eight/index' + (rating ? '&rating=' + rating : ''),//if rating is given we pass it 
             type: 'get',
             dataType: 'json',
             success: function(data) {

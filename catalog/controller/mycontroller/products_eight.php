@@ -1,14 +1,15 @@
 <?php
-class ControllerMycontrollerMyhome extends Controller {
+class ControllerMycontrollerproductseight extends Controller {
     public function index() {
+		//check if its an ajax request
         if (isset($this->request->server['HTTP_X_REQUESTED_WITH']) && $this->request->server['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
             $this->load->model('catalog/product');
             $this->load->model('tool/image');
 
-            $rating = isset($this->request->get['rating']) ? $this->request->get['rating'] : 0;  
+            $rating = isset($this->request->get['rating']) ? $this->request->get['rating'] : 0;  //get rating or set it to 0
 
             $json = array();
-            $results = $this->model_catalog_product->getProductsWithRatings($rating);
+            $results = $this->model_catalog_product->getProductsWithRatings($rating);//ask for products with rating 
 
             foreach ($results as $result) {
                 if ($result['image']) {
@@ -35,7 +36,7 @@ class ControllerMycontrollerMyhome extends Controller {
             $data['column_left'] = $this->load->controller('common/column_left');
             $data['column_right'] = $this->load->controller('common/column_right');
 
-            $this->response->setOutput($this->load->view('mycontroller/myhome', $data));
+            $this->response->setOutput($this->load->view('mycontroller/products_eight', $data));
         }
     }
 }
