@@ -6,5 +6,5 @@
 6.select extension->extensions
 7.select modules on the dropdown
 8.find "My Module" and install 
-9.ready to go 
+9.ready to go!
 (when you uninstall "My Module" you drop the table)
