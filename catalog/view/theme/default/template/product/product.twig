@@ -278,8 +278,12 @@
               <input type="text" name="quantity" value="{{ minimum }}" size="2" id="input-quantity" class="form-control" />
               <input type="hidden" name="product_id" value="{{ product_id }}" />
               <br />
+			  
+			  <div id="button-cart-wrapper">
               <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button>
-            </div>
+			  </div>
+
+		   </div>
             {% if minimum > 1 %}
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
             {% endif %}</div>
@@ -547,4 +551,45 @@ $(document).ready(function() {
 	});
 });
 //--></script> 
+<script type="text/javascript">
+$('input[name="quantity"], select[name="recurring_id"]').on('input change', function() {
+    console.log("Change detected");
+    var product_id = $('input[name="product_id"]').val();
+    var quantity = $('input[name="quantity"]').val();
+    var recurring_id = $('select[name="recurring_id"]').val();
+    $.ajax({
+        url: 'index.php?route=product/product/checkProductStock',
+        type: 'post',
+        data: {product_id: product_id, quantity: quantity, recurring_id: recurring_id},
+        dataType: 'json',
+        beforeSend: function() {
+            $('#recurring-description').html('');
+            $('#button-cart').prop('disabled', true); // Disable button until the response
+            $('#button-cart-wrapper').removeAttr('title'); // Remove tooltip
+        },
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+            if (json.error) {
+                $('#button-cart').prop('disabled', true); // Disable the button if there is an error (like insufficient stock)
+                $('#button-cart-wrapper').attr('title', 'Out of stock'); // Add tooltip
+                console.log('Button disabled due to error:', json.error);
+            } else {
+                $('#button-cart').prop('disabled', false); // Enable the button if no error
+                $('#button-cart-wrapper').removeAttr('title'); // Remove tooltip
+                $('#recurring-description').html(json.success);
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            $('#button-cart-wrapper').attr('title', 'Error checking stock'); // Tooltip in case of AJAX error
+        }
+    });
+});
+</script>
+<script>
+    $(document).ready(function() {
+        $('#input-quantity').val('{{ minimum }}');
+    });
+</script>
+
 {{ footer }} 

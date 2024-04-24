@@ -598,7 +598,7 @@ class ControllerProductProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
-
+	
 	public function getRecurringDescription() {
 		$this->load->language('product/product');
 		$this->load->model('catalog/product');
@@ -659,4 +659,33 @@ class ControllerProductProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+	public function checkProductStock() {
+		$this->load->language('product/product');
+		$this->load->model('catalog/product');
+
+		if (isset($this->request->post['product_id'])) {
+			$product_id = $this->request->post['product_id'];
+		} else {
+			$product_id = 0;
+		}
+		
+        if (isset($this->request->post['quantity'])) {
+			$quantity = $this->request->post['quantity'];
+		} else {
+			$quantity = 1; 
+		}
+
+		$product_info = $this->model_catalog_product->getProduct($product_id);
+
+		if (!$product_info || $product_info['quantity'] < $quantity) {
+			$json['error'] = 'Not enough stock';
+		} else {
+			$json['success'] = 'Sufficient stock';
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+}
+
 }
